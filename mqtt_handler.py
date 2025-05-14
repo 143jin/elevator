@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-MQTT_BROKER = "192.168.200.48"
+MQTT_BROKER = "192.168.200.68"
 COMMAND_TOPIC = "rs485_2mqtt/dev/command"
 RAW_TOPIC = "rs485_2mqtt/dev/raw"
 
