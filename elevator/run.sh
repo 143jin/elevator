@@ -1,3 +1,2 @@
 #!/bin/bash
-cd /elevator/elevator
-python3 mqtt_handler.py
+python3 /mqtt_handler.py
