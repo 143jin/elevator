@@ -9,5 +9,5 @@
   "homeassistant": "2024.5.0",
   "options": {},
   "schema": {},
-  "image": "ghcr.io/yourname/home-assistant-rs485-addon"
+  "image": "ghcr.io/143jin/home-assistant-rs485-addon"
 }
