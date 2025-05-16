@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
-
+MQTT_USERNAME = 'eunj'
+MQTT_PASSWORD = '!Teatime6699'
 MQTT_BROKER = "192.168.200.68"
 RAW_TOPIC = "rs485_2mqtt/dev/raw"
 SWITCH_TOPIC = "homeassistant/switch/rs485_switch/set"
