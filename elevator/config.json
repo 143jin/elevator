@@ -1,1 +1,11 @@
-
+{
+  "name": "Elevator",
+  "version": "1.0.0",
+  "slug": "elevator",
+  "description": "Elevator addon for Home Assistant",
+  "startup": "services",
+  "boot": "auto",
+  "arch": ["amd64", "aarch64", "armv7"],
+  "options": {},
+  "schema": {}
+}
