@@ -1,0 +1,8 @@
+{
+  "name": "Elevator Add-on Repository",
+  "url": "https://github.com/143jin/elevator",
+  "maintainer": "143jin <143jin@gmail.com>",
+  "addons": [
+    "elevator"
+  ]
+}
