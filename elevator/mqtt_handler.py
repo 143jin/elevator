@@ -9,7 +9,7 @@ SENSOR_TOPIC = "homeassistant/sensor/floor"
 ON_PACKET = bytes.fromhex("F7330181030024006336")
 OFF_PACKET = "f7330157009214"  # 도착 패킷 (문자열 형태로 비교)
 
-client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=5)  # 명시적으로 프로토콜 버전 지정
+client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 
 def parse_floor(packet):
     """ RS485 패킷에서 층수 추출 (16진수 그대로 표시) """
