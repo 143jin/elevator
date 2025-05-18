@@ -166,13 +166,14 @@ optional_info = {'modes': ['off', 'heat'], 'temp_step': 1, 'precision': 1, 'min_
 for message_flag in ['81', '44', '57']:
     엘리베이터.register_status(  message_flag = '81', attr_name = 'power', topic_class = 'mode_state_topic', regex = r'00([\da-fA-F]{2})[\da-fA-F]{2}[\da-fA-F]{4}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}', process_func = lambda v: 'heat' if format(int(v, 16), '05b')[4] == '1' else 'off')
     엘리베이터.register_status(  message_flag = message_flag, attr_name = 'targettemp',  topic_class ='temperature_state_topic',   regex = r'00[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{4}([\da-fA-F]{2})[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}', process_func = lambda v: int(v, 16) % 128 + int(v, 16) // 128 * 0.5)
-    엘리베이터.register_status(  message_flag = message_flag, attr_name = 'currenttemp', topic_class ='current_temperature_topic', regex = r'00[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{4}[\da-fA-F]{2}([\da-fA-F]{2})[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}', process_func = lambda v: int(v, 16) % 128 + int(v, 16) // 128 * 0.5)
-    엘리베이터.register_command(  message_flag = '81', attr_name = 'power', topic_class = 'mode_command_topic', process_func = lambda v: '01' if v == 'heat' else '00')
+    엘리베이터.register_status(  message_flag = '44', attr_name = 'currenttemp', topic_class ='current_temperature_topic', regex = r'01([\da-fA-F])', process_func = lambda v: int(v, 16) % 128 + int(v, 16) // 128 * 0.5)
+    엘리베이터.register_command(  message_flag = '81 03 00 24 00 63 36', attr_name = 'power', topic_class = 'mode_command_topic', process_func = lambda v: '01' if v == 'heat' else '00')
 #호출 패킷 F7 33 01 81 03 00 24 00 63 36 
 #층수 패킷 f7 33 01 44 01 다음에 나오는 숫자
 #도착 패킷 f7 33 01 57 00 92 14
-#목표온도->호출 패킷 전송
+#목표온도-> 패킷을 받지않고 19로 고정
 #현재온도->층수 패킷 표시
+#난방of -> 호출 패킷 전송
 #register_command-> 도착패킷후 스위치off
 
 
