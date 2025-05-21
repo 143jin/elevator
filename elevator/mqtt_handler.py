@@ -142,11 +142,26 @@ class Wallpad:
                 except Exception as e:
                     client.publish(ROOT_TOPIC_NAME + '/dev/error', payload_hexstring, qos = 1, retain = True)
 
-        else: # homeassistant에서 명령하여 MQTT topic을 publish하는 경우
-            topic_split = msg.topic.split('/') # rs485_2mqtt/light/안방등/power/set
-            device = self.get_device(device_name = topic_split[2])
+        # 호출 패킷: 실제 필요한 전체 패킷 (bytes)
+ELEVATOR_CALL_PACKET = bytes.fromhex("f7 33 01 81 03 00 24 00 63 36".replace(" ", ""))
+
+def on_raw_message(self, client, userdata, msg):
+    if msg.topic == ROOT_TOPIC_NAME + '/dev/raw':
+        # ... (생략)
+        pass
+    else:
+        # Home Assistant에서 climate 명령이 들어온 경우
+        topic_split = msg.topic.split('/')
+        if topic_split[2] == '엘리베이터' and topic_split[3] == 'power':
+            # 난방 켜기(heat) 명령에만 호출 패킷 전송
+            if msg.payload.decode() == 'heat':
+                client.publish(ROOT_TOPIC_NAME + '/dev/command', ELEVATOR_CALL_PACKET, qos=2, retain=False)
+            # 난방 끄기 명령은 별도 패킷 전송 없이 무시
+        else:
+            # 기존 명령 처리(다른 기기 등)
+            device = self.get_device(device_name=topic_split[2])
             payload = device.get_command_payload_byte(topic_split[3], msg.payload.decode())
-            client.publish(ROOT_TOPIC_NAME + '/dev/command', payload, qos = 2, retain = False)
+            client.publish(ROOT_TOPIC_NAME + '/dev/command', payload, qos=2, retain=False)
 
     def on_disconnect(self, client, userdata, rc):
         raise ConnectionError
@@ -167,7 +182,7 @@ for message_flag in ['81', '44', '57']:
     엘리베이터.register_status(  message_flag = '81', attr_name = 'power', topic_class = 'mode_state_topic', regex = r'00([\da-fA-F]{2})[\da-fA-F]{2}[\da-fA-F]{4}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}', process_func = lambda v: 'heat' if format(int(v, 16), '05b')[4] == '1' else 'off')
     엘리베이터.register_status(  message_flag = message_flag, attr_name = 'targettemp',  topic_class ='temperature_state_topic',   regex = r'00[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{4}([\da-fA-F]{2})[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}[\da-fA-F]{2}', process_func = lambda v: int(v, 16) % 128 + int(v, 16) // 128 * 0.5)
     엘리베이터.register_status(  message_flag = '44', attr_name = 'currenttemp', topic_class ='current_temperature_topic', regex = r'01([\da-fA-F])', process_func = lambda v: int(v, 16) % 128 + int(v, 16) // 128 * 0.5)
-    엘리베이터.register_command(  message_flag = '43', attr_name = 'power', topic_class = 'mode_command_topic', process_func = lambda v: '01' if v == 'heat' else '00')
+    
 #호출 패킷 F7 33 01 81 03 00 24 00 63 36 
 #층수 패킷 f7 33 01 44 01 다음에 나오는 숫자
 #도착 패킷 f7 33 01 57 00 92 14
