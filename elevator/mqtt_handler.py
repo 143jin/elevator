@@ -21,8 +21,8 @@ if not config.read(CONFIG_PATH):
 
 MQTT_SERVER = config['MQTT']['SERVER']
 MQTT_PORT = int(config['MQTT'].get('PORT', 1883))
-MQTT_USERNAME = config['MQTT']['eunj']
-MQTT_PASSWORD = config['MQTT']['!Teatime6699']
+MQTT_USERNAME = config['MQTT']['USERNAME']
+MQTT_PASSWORD = config['MQTT']['PASSWORD']
 
 ROOT_TOPIC_NAME = config['GENERAL'].get('ROOT_TOPIC_NAME', 'rs485_2mqtt')
 HOMEASSISTANT_ROOT_TOPIC_NAME = config['GENERAL'].get('HOMEASSISTANT_ROOT_TOPIC_NAME', 'homeassistant')
