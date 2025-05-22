@@ -179,5 +179,43 @@ class Wallpad:
             return m.groupdict()
         return None
 
-    def on_disconnect(self, client
-
+    def on_disconnect(self, client, userdata, rc):
+        logging.warning(f"MQTT 연결 끊어짐(rc={rc}), 재연결 시도")
+        self._connect_mqtt()
+
+# ---- 장치 선언, 등록 ----
+
+wallpad = Wallpad()
+
+optional_info = {
+    'modes': ['off', 'heat'],
+    'temp_step': 1,
+    'precision': 1,
+    'min_temp': -2,
+    'max_temp': 28,
+    'send_if_off': 'false'
+}
+엘리베이터 = wallpad.add_device(
+    device_name=ELEVATOR_DEVICE_NAME,
+    device_id=ELEVATOR_ID,
+    device_subid=ELEVATOR_SUBID,
+    device_class=ELEVATOR_CLASS,
+    optional_info=optional_info
+)
+
+def floor_hex_to_int(v):
+    v = v.lower()
+    if v.startswith('f'):
+        return -int(v[1:], 16)
+    return int(v, 16)
+
+# 층수 패킷(44)에서 01 XX 추출 → 현재온도에 publish
+엘리베이터.register_status(
+    message_flag=FLOOR_MESSAGE_FLAG,
+    attr_name='currenttemp',
+    topic_class='current_temperature_topic',
+    regex=r'01([0-9a-fA-F]{2})',
+    process_func=floor_hex_to_int
+)
+
+wallpad.listen()
