@@ -1,6 +1,6 @@
 {
   "name": "Elevator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "slug": "elevator",
   "description": "Elevator addon for Home Assistant",
   "startup": "services",
